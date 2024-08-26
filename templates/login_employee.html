@@ -1,17 +1,59 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>ABOUT</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        <h2> Employee</h2>
-        <a href={{url_for('dashboardEmployee')}}>Login</a>
-        <br/>
-        <a href={{url_for('home')}}>Homepage</a>   
-    </body>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login_employee.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container login-container">
+            <h2>Login</h2>
+            <form method="POST" action="{{ url_for('loginEmployee') }}">
+                <div class="input-group">
+                    <label for="username">User:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                {% if error %}
+                    <p class="error">{{ error }}</p>
+                {% endif %}
+                <button type="submit">Entter</button>
+            </form>
+        </div>
+        <div class="form-container register-container">
+            <h2>Register</h2>
+            <form method="POST" action="{{ url_for('loginEmployee') }}">
+                <div class="input-group">
+                    <label for="new-username">New User:</label>
+                    <input type="text" id="new-username" name="new-username" required>
+                </div>
+                <div class="input-group">
+                    <label for="enterprise">Enterprise:</label>
+                    <input type="text" id="enterprise" name="enterprise" required>
+                </div>
+                <div class="input-group">
+                    <label for="position">Position:</label>
+                    <input type="text" id="position" name="position" required>
+                </div>
+                <div class="input-group">
+                    <label for="new-password">New Password:</label>
+                    <input type="password" id="new-password" name="new-password" required>
+                </div>
+                <div class="input-group">
+                    <label for="confirm-password">Confirm Password:</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                {% if sucess %}
+                    <p class="sucess">{{ sucess }}</p>
+                {% endif %}
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+</body>
 </html>
