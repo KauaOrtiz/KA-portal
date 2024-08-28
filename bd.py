@@ -170,7 +170,7 @@ def editar_ponto(id_ponto, hora_inicio, hora_final):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute(
-        f"UPDATE pontos SET hora_final = '{hora_final}', hora_incio = '{hora_inicio}' WHERE id_ponto = '{id_ponto}'"
+        f"UPDATE pontos SET hora_final = '{hora_final}', hora_inicio = '{hora_inicio}' WHERE id_ponto = '{id_ponto}'"
     )
     conn.commit()
     cur.close()

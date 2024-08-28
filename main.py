@@ -149,8 +149,9 @@ def dashboardEnterprise():
             pontos = result.json
             print(pontos, "akosjhbcisdbclisdcbidcb")
             for ponto in pontos:
-                if ponto["id_ponto"] == id_ponto:
-                    result = editar_ponto(id_ponto, hora_inicio, hora_final)
+                if ponto["id_ponto"] == int(id_ponto):
+                    print(ponto)
+                    result = editar_ponto(int(id_ponto), hora_inicio, hora_final)
                     print("result")
                     return render_template("dashboard_enterprise.html", sucess=result.json)
                 else:
