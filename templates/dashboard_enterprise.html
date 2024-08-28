@@ -37,13 +37,16 @@
             <button type="submit">Editar ponto por ID</button>
         </form>
         <h1>---------------------------------------------------------------------------------</h1>
-        <form method="GET" action="{{ url_for('dashboardEnterprise') }}">
+        <form method="POST" action="{{ url_for('dashboardEnterprise') }}">
             <div class="input-group">
-                <label for="id_ponto">Id_ponto:</label>
-                <input type="text" id="id_ponto" name="id_ponto" required>
+                <label for="id_ponto_delete">Id_ponto:</label>
+                <input type="text" id="id_ponto_delete" name="id_ponto_delete" required>
             </div>
             {% if sucess %}
                 <p class="sucess">{{ sucess }}</p>
+            {% endif %}
+            {% if error %}
+                <p class="error">{{ error }}</p>
             {% endif %}
             <button type="submit">Apagar ponto por id</button>
         </form>

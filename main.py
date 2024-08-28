@@ -134,30 +134,41 @@ def dashboardEmployee():
 
 @app.route("/dashboard/enterprise", methods=['GET', 'POST'])
 def dashboardEnterprise():
+    print(request.method)
     if request.method == "GET":
         result = buscar_todos_pontos(session.get('id_empresa'))
         pontos = result.json
-        print(pontos)
         return render_template("dashboard_enterprise.html", sucess=pontos)
 
     elif request.method == "POST":
-        if 'hora_inicio' in request.form: 
+        if 'hora_inicio' in request.form:
+
             id_ponto = request.form["id_ponto"]
             hora_final = request.form["hora_final"]
             hora_inicio = request.form["hora_inicio"]
             result = buscar_todos_pontos(session.get('id_empresa'))
             pontos = result.json
-            print(pontos, "akosjhbcisdbclisdcbidcb")
+
+            for ponto in pontos:
+                if ponto["id_ponto"] == int(id_ponto):   
+                    result = editar_ponto(int(id_ponto), hora_inicio, hora_final)
+                    data = result.json
+                    if data['message'] == 'success':
+                        return render_template("dashboard_enterprise.html", sucess="Ponto alterado com sucesso")
+        
+        elif "id_ponto_delete" in request.form:
+            id_ponto = request.form["id_ponto_delete"]
+            result = buscar_todos_pontos(session.get('id_empresa'))
+            pontos = result.json
+            print(pontos)
             for ponto in pontos:
                 if ponto["id_ponto"] == int(id_ponto):
-                    print(ponto)
-                    result = editar_ponto(int(id_ponto), hora_inicio, hora_final)
-                    print("result")
-                    return render_template("dashboard_enterprise.html", sucess=result.json)
-                else:
-                    return render_template("dashboard_enterprise.html", error="Ponto não encontrado")
-    
+                    result = apagar_ponto(int(id_ponto))
+                    data = result.json
+                    if data['message'] == 'success':
+                        return render_template("dashboard_enterprise.html", sucess="Ponto excluído com sucesso.")
+
     return render_template("dashboard_enterprise.html", error="Ponto não encontrado")
 
 if __name__ == "__main__":
-    app.run(debug = True, host = '0.0.0.0') 
+    app.run(debug = True, host = '0.0.0.0')

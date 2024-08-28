@@ -163,8 +163,16 @@ def buscar_todos_pontos(id_empresa):
     ]
     return jsonify(pontos_formatados)
 
-def apagar_ponto():
-    pass
+def apagar_ponto(id_ponto):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(
+        f"DELETE FROM pontos WHERE id_ponto = '{id_ponto}'"
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({"message": "success"})
 
 def editar_ponto(id_ponto, hora_inicio, hora_final):
     conn = get_db_connection()
