@@ -10,6 +10,33 @@
     </head>
     <body>
         <h2>Enterprise Dashboard</h2>
-        <a href={{url_for('home')}}>Logout</a>   
+         
+        <form method="GET" action="{{ url_for('dashboardEnterprise') }}">
+            {% if sucess %}
+                <p class="sucess">{{ sucess }}</p>
+            {% endif %}
+            <button type="submit">Consultar todos os pontos</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('dashboardEnterprise') }}">
+            <div class="input-group">
+                <label for="id_ponto">Id_ponto:</label>
+                <input type="text" id="id_ponto" name="id_ponto" required>
+            </div>
+            <div class="input-group">
+                <label for="hora_inicio">hora_inicio:</label>
+                <input type="text" id="hora_inicio" name="hora_inicio" required>
+            </div>
+            <div class="input-group">
+                <label for="hora_final">hora_final:</label>
+                <input type="text" id="hora_final" name="hora_final" required>
+            </div>
+            {% if sucess %}
+                <p class="sucess">{{ sucess }}</p>
+            {% endif %}
+            <button type="submit">Apagar ponto por ID</button>
+        </form>
+
+        <a href={{ url_for('home') }}>Logout</a>  
     </body>
 </html>
