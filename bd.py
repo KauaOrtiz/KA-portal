@@ -1,7 +1,7 @@
 import psycopg2
 from flask import jsonify
 
-def get_db_connection():
+def getDBConnection():
     conn = psycopg2.connect(
         database = "ka",
         host = "localhost",
@@ -11,10 +11,10 @@ def get_db_connection():
     )
     return conn
 
-def busca_funcionario(username, senha):
-    conn = get_db_connection()
+def getEmployee(username, password):
+    conn = getDBConnection()
     cur = conn.cursor()
-    cur.execute(f"SELECT * FROM funcionario WHERE nome = '{username}' AND senha = '{senha}'")
+    cur.execute(f"SELECT * FROM funcionario WHERE nome = '{username}' AND senha = '{password}'")
     user = cur.fetchone()
     cur.close()
     conn.close()
@@ -29,67 +29,67 @@ def busca_funcionario(username, senha):
             "nome_empresa": user[5]
         })
     else:
-        return jsonify({"message": "Usuário não encontrado"})
+        return jsonify({"message": "Employee not found"})
 
-def create_funcionario(new_username, enterprise, position, new_password): 
+def createEmployee(newUsername, enterprise, position, newPassword): 
     
-    conn = get_db_connection()
+    conn = getDBConnection()
     cur = conn.cursor()
 
     cur.execute(f"SELECT * FROM empresas WHERE nome_empresa = '{enterprise}'")
-    empresa = cur.fetchone()
+    company = cur.fetchone()
 
-    if empresa:
+    if company:
         cur.execute(
-            f"INSERT INTO funcionario (id_empresa, nome, senha, cargo, nome_empresa) VALUES ('{empresa[0]}', '{new_username}', '{new_password}', '{position}', '{enterprise}') RETURNING id_user"
+            f"INSERT INTO funcionario (id_empresa, nome, senha, cargo, nome_empresa) VALUES ('{company[0]}', '{newUsername}', '{newPassword}', '{position}', '{enterprise}') RETURNING id_user"
         )
-        id_user = cur.fetchone()[0]
+        userId = cur.fetchone()[0]
         conn.commit() 
         cur.close()
         conn.close()
     else:
         cur.close()
         conn.close()
-        return jsonify({"message": "Empresa não cadastrada"})
+        return jsonify({"message": "Company is not registered"})
 
-    return jsonify({"message": "success", "id_user": id_user})
+    return jsonify({"message": "success", "id_user": userId})
 
-def buscar_empresa(username, senha):
-    conn = get_db_connection()
+def getEnterprise(username, password):
+    conn = getDBConnection()
     cur = conn.cursor()
-    cur.execute(f"SELECT * FROM empresas WHERE nome_empresa = '{username}' AND senha = '{senha}'")
-    empresa = cur.fetchone()
+    cur.execute(f"SELECT * FROM empresas WHERE nome_empresa = '{username}' AND senha = '{password}'")
+    company = cur.fetchone()
     cur.close()
     conn.close()
 
-    if empresa:
+    if company:
         return jsonify({
             "message": "success",
-            "id_empresa": empresa[0],
-            "nome_empresa": empresa[1],
-            "senha": empresa[2]
+            "id_empresa": company[0],
+            "nome_empresa": company[1],
+            "senha": company[2]
         })
     else:
         return jsonify({"message": 'Invalid Credentials'})
 
-def create_empresa(nome_empresa, senha):
+def createEnterprise(enterpriseName, password):
 
-    conn = get_db_connection()
+    conn = getDBConnection()
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO empresas (nome_empresa, senha) VALUES ('{nome_empresa}', '{senha}') RETURNING id_empresa")
-    id_empresa = cur.fetchone()[0]
+    cur.execute(f"INSERT INTO empresas (nome_empresa, senha) VALUES ('{enterpriseName}', '{password}') RETURNING id_empresa")
+    companyId = cur.fetchone()[0]
     conn.commit()
     cur.close()
     conn.close()
 
-    return jsonify({"message": "Enterprise create! Login now!", "id_empresa": id_empresa})
+    return jsonify({"message": "Enterprise create! Login now!", "id_empresa": companyId})
 
-def ver_se_eh_ponto_saida(id_user, data):
-    conn = get_db_connection()
+def checkFinalPoint(userId, data):
+    conn = getDBConnection()
     cur = conn.cursor()
 
     cur.execute(
-        f"SELECT COUNT(*) FROM pontos WHERE id_user = '{id_user}' AND DATE(hora_inicio) = '{data}'"
+        f"SELECT COUNT(*) FROM pontos WHERE id_user = '{userId}' AND DATE(hora_inicio) = '{data}'"
     )
     count = cur.fetchone()[0]
     cur.close()
@@ -99,91 +99,91 @@ def ver_se_eh_ponto_saida(id_user, data):
     else:
         return jsonify({"message": "false"})
 
-def bater_ponto_entrada(id_user, hora_inicio):
-    conn = get_db_connection()
+def startPoint(userId, startTime):
+    conn = getDBConnection()
     cur = conn.cursor()
-    cur.execute(f"INSERT INTO pontos (id_user, hora_inicio) VALUES ('{id_user}', '{hora_inicio}') RETURNING id_ponto")
-    id_ponto = cur.fetchone()[0]
+    cur.execute(f"INSERT INTO pontos (id_user, hora_inicio) VALUES ('{userId}', '{startTime}') RETURNING id_ponto")
+    pointId = cur.fetchone()[0]
     conn.commit()
     cur.close()
     conn.close()
-    return jsonify({"message": "success", "id_ponto": id_ponto})
+    return jsonify({"message": "success", "id_ponto": pointId})
 
-def buscar_ponto_dia(id_user, data):
-    conn = get_db_connection()
+def getDayPoint(userId, data):
+    conn = getDBConnection()
     cur = conn.cursor()
 
     cur.execute(
-        f"SELECT * FROM pontos WHERE id_user = '{id_user}' AND DATE(hora_inicio) = '{data}'"
+        f"SELECT * FROM pontos WHERE id_user = '{userId}' AND DATE(hora_inicio) = '{data}'"
     )
-    pontos = cur.fetchone()
+    points = cur.fetchone()
     cur.close()
     conn.close()
 
     return jsonify({
-        "id_ponto": pontos[0],
-        "id_user": pontos[1],
-        "hora_inicio": pontos[2]
+        "id_ponto": points[0],
+        "id_user": points[1],
+        "hora_inicio": points[2]
     })
 
-def bater_ponto_saida(id_ponto, data_final):
-    conn = get_db_connection()
+def finalPoint(pointId, finalTime):
+    conn = getDBConnection()
     cur = conn.cursor()
     cur.execute(
-        f"UPDATE pontos SET hora_final = '{data_final}' WHERE id_ponto = '{id_ponto}'"
+        f"UPDATE pontos SET hora_final = '{finalTime}' WHERE id_ponto = '{pointId}'"
     )
     conn.commit()
     cur.close()
     conn.close()
     return jsonify({"message": "success"})
 
-def buscar_todos_pontos(id_empresa):
-    conn = get_db_connection()
+def getAllPoints(enterpriseId):
+    conn = getDBConnection()
     cur = conn.cursor()
     cur.execute(f"""
         SELECT p.id_ponto, p.id_user, p.hora_inicio, p.hora_final, f.nome
         FROM pontos p
         JOIN funcionario f ON p.id_user = f.id_user
-        WHERE f.id_empresa = {id_empresa}
+        WHERE f.id_empresa = {enterpriseId}
         ORDER BY p.hora_inicio
     """)
-    pontos = cur.fetchall()
+    points = cur.fetchall()
     cur.close()
     conn.close()
 
-    pontos_formatados = [
+    formatedPoints = [
         {
-            "id_ponto": ponto[0],
-            "id_user": ponto[1],
-            "hora_inicio": ponto[2],
-            "hora_final": ponto[3],
-            "nome": ponto[4]
+            "id_ponto": point[0],
+            "id_user": point[1],
+            "hora_inicio": point[2],
+            "hora_final": point[3],
+            "nome": point[4]
         }
-        for ponto in pontos
+        for point in points
     ]
-    return jsonify(pontos_formatados)
+    return jsonify(formatedPoints)
 
-def apagar_ponto(id_ponto):
-    conn = get_db_connection()
+def deletePoint(pointId):
+    conn = getDBConnection()
     cur = conn.cursor()
     cur.execute(
-        f"DELETE FROM pontos WHERE id_ponto = '{id_ponto}'"
+        f"DELETE FROM pontos WHERE id_ponto = '{pointId}'"
     )
     conn.commit()
     cur.close()
     conn.close()
     return jsonify({"message": "success"})
 
-def editar_ponto(id_ponto, hora_inicio, hora_final):
-    conn = get_db_connection()
+def editPoint(pointId, startTime, finalTime):
+    conn = getDBConnection()
     cur = conn.cursor()
     cur.execute(
-        f"UPDATE pontos SET hora_final = '{hora_final}', hora_inicio = '{hora_inicio}' WHERE id_ponto = '{id_ponto}'"
+        f"UPDATE pontos SET hora_final = '{finalTime}', hora_inicio = '{startTime}' WHERE id_ponto = '{pointId}'"
     )
     conn.commit()
     cur.close()
     conn.close()
     return jsonify({"message": "success"})
 
-# result = create_empresa("creare", "creare")
+# result = createEnterprise("creare", "creare")
 # print(result)

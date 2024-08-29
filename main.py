@@ -3,21 +3,22 @@ from flask import Flask, json, session, render_template, request, redirect, url_
 from datetime import datetime, date
 
 from bd import (
-    create_empresa, 
-    buscar_empresa, 
-    create_funcionario, 
-    busca_funcionario,
-    ver_se_eh_ponto_saida,
-    bater_ponto_entrada,
-    buscar_todos_pontos,
-    bater_ponto_saida,
-    buscar_ponto_dia,
-    apagar_ponto,
-    editar_ponto
+    createEnterprise, 
+    getEnterprise, 
+    createEmployee, 
+    getEmployee,
+    checkFinalPoint,
+    startPoint,
+    getAllPoints,
+    finalPoint,
+    getDayPoint,
+    deletePoint,
+    editPoint
 )
 
 app = Flask(__name__)
 app.secret_key = 'chave_secreta'
+
 
 @app.route("/")
 def home():
@@ -30,7 +31,7 @@ def loginEmployee():
             username = request.form['username']
             password = request.form['password']
 
-            result = busca_funcionario(username, password)
+            result = getEmployee(username, password)
             data = result.json
 
             if username == 'admin' and password == 'password':
@@ -53,7 +54,7 @@ def loginEmployee():
             confirm_password = request.form['confirm-password']
 
             if new_password == confirm_password:
-                result = create_funcionario(new_username, enterprise, position, new_password)
+                result = createEmployee(new_username, enterprise, position, new_password)
                 data = result.json
 
                 if data['message'] == "success":
@@ -75,7 +76,7 @@ def loginEnterprise():
             company = request.form['company']
             password = request.form['password']
 
-            result = buscar_empresa(company, password)
+            result = getEnterprise(company, password)
             data = result.json
             
             if company == 'admin' and password == 'password':
@@ -96,7 +97,7 @@ def loginEnterprise():
             confirm_password = request.form['confirm-password']
 
             if new_password == confirm_password:
-                result = create_empresa(new_company, new_password)
+                result = createEnterprise(new_company, new_password)
                 data = result.json
                 state = data["message"]
                 return render_template('login_enterprise.html', state=state)
@@ -106,28 +107,24 @@ def loginEnterprise():
                 return render_template('login_enterprise.html', state=state)
             
     return render_template('login_enterprise.html')
-
-def obter_data_hora_atual():
-    agora = datetime.now()  # Obtém a data e hora atuais
-    return agora
-
+    
 @app.route("/dashboard/employee", methods=['GET', 'POST'])
 def dashboardEmployee():
     if request.method == 'POST':
-        result2 = ver_se_eh_ponto_saida(session.get('id_user'), date.today())
+        result2 = checkFinalPoint(session.get('id_user'), date.today())
         data2 = result2.json
 
         if data2["message"] == "success":
-            ponto = buscar_ponto_dia(session.get('id_user'), date.today())
+            ponto = getDayPoint(session.get('id_user'), date.today())
             dados = ponto.json
-            result4 = bater_ponto_saida(dados['id_ponto'], obter_data_hora_atual())
+            result4 = finalPoint(dados['id_ponto'], getDatetime())
             data4 = result4.json
             if data4['message'] == "success":
-                return render_template("dashboard_employee.html", sucess="Ponto de Saída")
+                return render_template("dashboard_employee.html", sucess="Exit Point")
         else:
-            result = bater_ponto_entrada(session.get('id_user'), obter_data_hora_atual())
+            result = startPoint(session.get('id_user'), getDatetime())
             print(result.json)
-            return render_template("dashboard_employee.html", sucess="Ponto de Entrada")
+            return render_template("dashboard_employee.html", sucess="Entry Point")
     else:
         return render_template("dashboard_employee.html")
 
@@ -136,7 +133,7 @@ def dashboardEmployee():
 def dashboardEnterprise():
     print(request.method)
     if request.method == "GET":
-        result = buscar_todos_pontos(session.get('id_empresa'))
+        result = getAllPoints(session.get('id_empresa'))
         pontos = result.json
         return render_template("dashboard_enterprise.html", sucess=pontos)
 
@@ -146,29 +143,33 @@ def dashboardEnterprise():
             id_ponto = request.form["id_ponto"]
             hora_final = request.form["hora_final"]
             hora_inicio = request.form["hora_inicio"]
-            result = buscar_todos_pontos(session.get('id_empresa'))
+            result = getAllPoints(session.get('id_empresa'))
             pontos = result.json
 
             for ponto in pontos:
                 if ponto["id_ponto"] == int(id_ponto):   
-                    result = editar_ponto(int(id_ponto), hora_inicio, hora_final)
+                    result = editPoint(int(id_ponto), hora_inicio, hora_final)
                     data = result.json
                     if data['message'] == 'success':
-                        return render_template("dashboard_enterprise.html", sucess="Ponto alterado com sucesso")
+                        return render_template("dashboard_enterprise.html", sucess="Point changed successfully")
         
         elif "id_ponto_delete" in request.form:
             id_ponto = request.form["id_ponto_delete"]
-            result = buscar_todos_pontos(session.get('id_empresa'))
+            result = getAllPoints(session.get('id_empresa'))
             pontos = result.json
             print(pontos)
             for ponto in pontos:
                 if ponto["id_ponto"] == int(id_ponto):
-                    result = apagar_ponto(int(id_ponto))
+                    result = deletePoint(int(id_ponto))
                     data = result.json
                     if data['message'] == 'success':
-                        return render_template("dashboard_enterprise.html", sucess="Ponto excluído com sucesso.")
+                        return render_template("dashboard_enterprise.html", sucess="Point deleted successfully")
 
-    return render_template("dashboard_enterprise.html", error="Ponto não encontrado")
+    return render_template("dashboard_enterprise.html", error="Point not found")
+
+def getDatetime():
+    agora = datetime.now()
+    return agora
 
 if __name__ == "__main__":
     app.run(debug = True, host = '0.0.0.0')

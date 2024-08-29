@@ -9,13 +9,13 @@
         <link rel="stylesheet" href="">
     </head>
     <body>
-        <h2>Enterprise Dashboard</h2>
+        <h2>Employee Dashboard</h2>
          
         <form method="POST" action="{{ url_for('dashboardEmployee') }}">
             {% if sucess %}
                 <p class="sucess">{{ sucess }}</p>
             {% endif %}
-            <button type="submit">Bater Ponto</button>
+            <button type="submit">Clock in</button>
         </form>
 
         <a href={{ url_for('home') }}>Logout</a>  
