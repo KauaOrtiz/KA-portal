@@ -6,12 +6,13 @@
         <title>HOME</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
     </head>
     <body>
-        <h2> KA Portal</h2>
-        <a href={{url_for('loginEmployee')}}>Employee</a> 
-        <br/>  
-        <a href={{url_for('loginEnterprise')}}>Enterprise</a>   
+        <div class="container">
+            <h2>KA Portal</h2>
+            <a href="{{url_for('loginEmployee')}}" class="button">Employee</a> 
+            <a href="{{url_for('loginEnterprise')}}" class="button">Enterprise</a>   
+        </div>
     </body>
 </html>
