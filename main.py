@@ -98,12 +98,12 @@ def loginEnterprise():
             if new_password == confirm_password:
                 result = create_empresa(new_company, new_password)
                 data = result.json
-                sucess = data["message"]
-                return render_template('login_enterprise.html', sucess=sucess)
+                state = data["message"]
+                return render_template('login_enterprise.html', state=state)
             
             else:
-                error = "Passwords don't match"
-                return render_template('login_enterprise.html', error=error)
+                state = "Passwords don't match"
+                return render_template('login_enterprise.html', state=state)
             
     return render_template('login_enterprise.html')
 
