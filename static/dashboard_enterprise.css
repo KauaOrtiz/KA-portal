@@ -110,3 +110,21 @@ th {
 tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+
+input[type="text"],
+input[type="datetime-local"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+input[type="datetime-local"] {
+    color: #333;
+    background-color: #fff;
+    appearance: none;
+}

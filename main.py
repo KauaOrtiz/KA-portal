@@ -128,10 +128,8 @@ def dashboardEmployee():
     else:
         return render_template("dashboard_employee.html")
 
-
 @app.route("/dashboard/enterprise", methods=['GET', 'POST'])
 def dashboardEnterprise():
-    print(request.method)
     if request.method == "GET":
         result = getAllPoints(session.get('id_empresa'))
         pontos = result.json
@@ -139,15 +137,18 @@ def dashboardEnterprise():
 
     elif request.method == "POST":
         if 'hora_inicio' in request.form:
-
             id_ponto = request.form["id_ponto"]
-            hora_final = request.form["hora_final"]
             hora_inicio = request.form["hora_inicio"]
+            hora_final = request.form["hora_final"]
+
+            hora_inicio = datetime.strptime(hora_inicio, '%Y-%m-%dT%H:%M').strftime('%Y-%m-%d %H:%M:%S.%f')
+            hora_final = datetime.strptime(hora_final, '%Y-%m-%dT%H:%M').strftime('%Y-%m-%d %H:%M:%S.%f')
+
             result = getAllPoints(session.get('id_empresa'))
             pontos = result.json
 
             for ponto in pontos:
-                if ponto["id_ponto"] == int(id_ponto):   
+                if ponto["id_ponto"] == int(id_ponto):
                     result = editPoint(int(id_ponto), hora_inicio, hora_final)
                     data = result.json
                     if data['message'] == 'success':
@@ -157,7 +158,6 @@ def dashboardEnterprise():
             id_ponto = request.form["id_ponto_delete"]
             result = getAllPoints(session.get('id_empresa'))
             pontos = result.json
-            print(pontos)
             for ponto in pontos:
                 if ponto["id_ponto"] == int(id_ponto):
                     result = deletePoint(int(id_ponto))
@@ -166,6 +166,7 @@ def dashboardEnterprise():
                         return render_template("dashboard_enterprise.html", sucessDelete="Point deleted successfully")
 
     return render_template("dashboard_enterprise.html", error="Point not found")
+
 
 def getDatetime():
     agora = datetime.now()

@@ -48,12 +48,12 @@
                     </div>
                     <div class="input-group">
                         <label for="hora_inicio">Clock In:</label>
-                        <input type="text" id="hora_inicio" name="hora_inicio" required>
+                        <input type="datetime-local" id="hora_inicio" name="hora_inicio" required>
                     </div>
                     <div class="input-group">
                         <label for="hora_final">Clock Out:</label>
-                        <input type="text" id="hora_final" name="hora_final" required>
-                    </div>
+                        <input type="datetime-local" id="hora_final" name="hora_final" required>
+                    </div>                    
                     {% if sucessEdit %}
                         <p class="success">{{ sucessEdit }}</p>
                     {% endif %}
