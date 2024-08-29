@@ -135,7 +135,7 @@ def dashboardEnterprise():
     if request.method == "GET":
         result = getAllPoints(session.get('id_empresa'))
         pontos = result.json
-        return render_template("dashboard_enterprise.html", sucess=pontos)
+        return render_template("dashboard_enterprise.html", sucessAll=pontos)
 
     elif request.method == "POST":
         if 'hora_inicio' in request.form:
@@ -151,7 +151,7 @@ def dashboardEnterprise():
                     result = editPoint(int(id_ponto), hora_inicio, hora_final)
                     data = result.json
                     if data['message'] == 'success':
-                        return render_template("dashboard_enterprise.html", sucess="Point changed successfully")
+                        return render_template("dashboard_enterprise.html", sucessEdit="Point changed successfully")
         
         elif "id_ponto_delete" in request.form:
             id_ponto = request.form["id_ponto_delete"]
@@ -163,7 +163,7 @@ def dashboardEnterprise():
                     result = deletePoint(int(id_ponto))
                     data = result.json
                     if data['message'] == 'success':
-                        return render_template("dashboard_enterprise.html", sucess="Point deleted successfully")
+                        return render_template("dashboard_enterprise.html", sucessDelete="Point deleted successfully")
 
     return render_template("dashboard_enterprise.html", error="Point not found")
 
