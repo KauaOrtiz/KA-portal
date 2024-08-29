@@ -6,18 +6,20 @@
         <title>ABOUT</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="{{ url_for('static', filename='dashboard_employee.css') }}">
     </head>
     <body>
-        <h2>Employee Dashboard</h2>
-         
-        <form method="POST" action="{{ url_for('dashboardEmployee') }}">
-            {% if sucess %}
-                <p class="sucess">{{ sucess }}</p>
-            {% endif %}
-            <button type="submit">Clock in</button>
-        </form>
+        <div class="container">
+            <h2>Employee Dashboard</h2>
+            
+            <form method="POST" action="{{ url_for('dashboardEmployee') }}">
+                {% if sucess %}
+                    <p class="success">{{ sucess }}</p>
+                {% endif %}
+                <button type="submit" class="button">Clock in</button>
+            </form>
 
-        <a href={{ url_for('home') }}>Logout</a>  
+            <a href="{{ url_for('home') }}" class="logout-link">Logout</a>  
+        </div>
     </body>
 </html>
